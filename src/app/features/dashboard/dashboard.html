@@ -1,1 +1,43 @@
-<p>dashboard works!</p>
+<div class="dashboard">
+  <div class="dashboard-header">
+    <div class="header-left">
+      <h1>Dashboard</h1>
+      @if (lastUpdate()) {
+        <div class="last-update">
+          Updated: {{lastUpdate() | date:'HH:mm:ss'}}
+        </div>
+      }
+    </div>
+    
+    <div class="header-right">
+      <div class="stats">
+        <span class="stat">{{symbols().length}} symbols</span>
+        <span class="stat">{{favorites().length}} favorites</span>
+      </div>
+      
+      <button 
+        mat-icon-button 
+        [class.loading]="isLoading()"
+        (click)="refreshData()"
+        matTooltip="Refresh data">
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </div>
+  </div>
+  
+  <div class="content">
+    @if (isLoading()) {
+      <div class="loading-overlay">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Loading market data...</p>
+      </div>
+    }
+    
+    <app-symbols-table
+      [symbols]="symbols()"
+      [favorites]="favorites()"
+      (symbolSelected)="onSymbolSelected($event)"
+      (favoriteToggled)="onFavoriteToggled($event)">
+    </app-symbols-table>
+  </div>
+</div>

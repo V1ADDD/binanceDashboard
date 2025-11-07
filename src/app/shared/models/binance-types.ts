@@ -157,3 +157,9 @@ export interface KlineEvent {
     B: string; // Ignore
   };
 }
+
+export interface SymbolTableColumn {
+  key: keyof Ticker24hr | 'favorite';
+  label: string;
+  sortable?: boolean;
+}
