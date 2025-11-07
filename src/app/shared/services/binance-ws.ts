@@ -24,10 +24,12 @@ export class BinanceWs {
     return webSocket<KlineEvent>(`${this.baseUrl}/${stream}`);
   }
 
-  public createMultiStream(streams: string[]): WebSocketSubject<{ stream: string; data: AggTradeEvent | DepthEvent | KlineEvent }> {
+  public createMultiStream(
+    streams: string[],
+  ): WebSocketSubject<{ stream: string; data: AggTradeEvent | DepthEvent | KlineEvent }> {
     const streamParam = streams.join('/');
     return webSocket<{ stream: string; data: AggTradeEvent | DepthEvent | KlineEvent }>(
-      `${this.multiStreamUrl}?streams=${streamParam}`
+      `${this.multiStreamUrl}?streams=${streamParam}`,
     );
   }
 }

@@ -19,7 +19,7 @@ import { Ticker24hr } from '../../shared/models/binance-types';
     MatFormFieldModule,
     MatIconModule,
     MatButtonModule,
-    FormsModule
+    FormsModule,
   ],
   templateUrl: './symbols-table.html',
   styleUrl: './symbols-table.scss',
@@ -28,7 +28,7 @@ import { Ticker24hr } from '../../shared/models/binance-types';
 export class SymbolsTable {
   public symbols = input<Ticker24hr[]>([]);
   public favorites = input<string[]>([]);
-  
+
   public symbolSelected = output<string>();
   public favoriteToggled = output<string>();
 
@@ -38,22 +38,18 @@ export class SymbolsTable {
 
   public filteredAndSortedData = computed(() => {
     let data = this.symbols();
-    
+
     // поиск
     const search = this.searchTerm().toLowerCase();
     if (search) {
-      data = data.filter(symbol => 
-        symbol.symbol.toLowerCase().includes(search)
-      );
+      data = data.filter((symbol) => symbol.symbol.toLowerCase().includes(search));
     }
-    
+
     // сортировка
     const column = this.sortColumn();
     const direction = this.sortDirection();
-    if (column && direction) {
-      data = this.sortData([...data], column, direction);
-    }
-    
+    data = this.sortData([...data], column, direction);
+
     return data;
   });
 
@@ -64,7 +60,7 @@ export class SymbolsTable {
   public onSort(column: string): void {
     const currentColumn = this.sortColumn();
     const currentDirection = this.sortDirection();
-    
+
     if (currentColumn === column) {
       this.sortDirection.set(currentDirection === 'asc' ? 'desc' : 'asc');
     } else {
@@ -99,16 +95,23 @@ export class SymbolsTable {
 
   private sortData(data: Ticker24hr[], column: string, direction: string): Ticker24hr[] {
     return [...data].sort((a, b) => {
+      const aIsFavorite = this.isFavorite(a.symbol);
+      const bIsFavorite = this.isFavorite(b.symbol);
+
+      if (aIsFavorite && !bIsFavorite) return -1;
+      if (!aIsFavorite && bIsFavorite) return 1;
+
       let valueA = a[column as keyof Ticker24hr];
       let valueB = b[column as keyof Ticker24hr];
-      
+
       if (column === 'lastPrice' || column === 'priceChangePercent' || column === 'volume') {
         valueA = +valueA;
         valueB = +valueB;
       }
-      
+
       if (valueA < valueB) return direction === 'asc' ? -1 : 1;
       if (valueA > valueB) return direction === 'asc' ? 1 : -1;
+
       return 0;
     });
   }

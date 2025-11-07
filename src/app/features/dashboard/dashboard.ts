@@ -1,5 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { SymbolsTable } from '../symbols-table/symbols-table';
 import { BinanceApi } from '../../shared/services/binance-api';
 import { Favorite } from '../../shared/services/favorite';
@@ -20,7 +27,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatProgressSpinnerModule,
     MatButtonModule,
     MatIconModule,
-    MatTooltipModule
+    MatTooltipModule,
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
@@ -51,15 +58,14 @@ export class Dashboard implements OnInit {
           if (this.symbols().length === 0) {
             this.isLoading.set(true);
           }
-          return this.binanceApi.get24hrTicker()
-            .pipe(
-              catchError((error) => {
-                console.error('Error fetching symbols:', error);
-                this.isLoading.set(false);
-                return of([]);
-              })
-            );
-        })
+          return this.binanceApi.get24hrTicker().pipe(
+            catchError((error) => {
+              console.error('Error fetching symbols:', error);
+              this.isLoading.set(false);
+              return of([]);
+            }),
+          );
+        }),
       )
       .subscribe({
         next: (data) => {
@@ -71,7 +77,7 @@ export class Dashboard implements OnInit {
         error: (error) => {
           console.error('Error in subscription:', error);
           this.isLoading.set(false);
-        }
+        },
       });
   }
 
@@ -90,7 +96,8 @@ export class Dashboard implements OnInit {
 
   private loadSymbols(): void {
     console.log('Loading symbols...');
-    this.binanceApi.get24hrTicker()
+    this.binanceApi
+      .get24hrTicker()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (data) => {
@@ -102,7 +109,7 @@ export class Dashboard implements OnInit {
         error: (error) => {
           console.error('Error loading symbols:', error);
           this.isLoading.set(false);
-        }
+        },
       });
   }
 }

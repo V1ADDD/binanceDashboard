@@ -2,91 +2,94 @@
   <div class="table-header">
     <mat-form-field appearance="outline" class="search-field">
       <mat-label>Search Symbol</mat-label>
-      <input matInput 
-             [ngModel]="searchTerm()" 
-             (ngModelChange)="onSearchChange($event)" 
-             placeholder="BTCUSDT">
+      <input
+        matInput
+        [ngModel]="searchTerm()"
+        (ngModelChange)="onSearchChange($event)"
+        placeholder="BTCUSDT"
+      />
     </mat-form-field>
-    
+
     <div class="table-info">
-      Showing {{filteredAndSortedData().length}} of {{symbols().length}} symbols
+      Showing {{ filteredAndSortedData().length }} of {{ symbols().length }} symbols
     </div>
   </div>
 
   @if (filteredAndSortedData().length > 0) {
     <div class="table-wrapper">
-      
-      <cdk-virtual-scroll-viewport 
-        itemSize="48" 
+      <cdk-virtual-scroll-viewport
+        itemSize="48"
         class="viewport"
         minBufferPx="100"
-        maxBufferPx="200">
-        
+        maxBufferPx="200"
+      >
         <table class="cdk-table">
           <thead>
             <tr class="header-row">
               <th class="header-cell"></th>
-              
+
               <th class="header-cell sortable" (click)="onSort('symbol')">
                 <div class="header-content">
                   Symbol
-                  <mat-icon class="sort-icon">{{getSortIcon('symbol')}}</mat-icon>
+                  <mat-icon class="sort-icon">{{ getSortIcon('symbol') }}</mat-icon>
                 </div>
               </th>
-              
+
               <th class="header-cell sortable" (click)="onSort('lastPrice')">
                 <div class="header-content">
                   Last Price
-                  <mat-icon class="sort-icon">{{getSortIcon('lastPrice')}}</mat-icon>
+                  <mat-icon class="sort-icon">{{ getSortIcon('lastPrice') }}</mat-icon>
                 </div>
               </th>
-              
+
               <th class="header-cell sortable" (click)="onSort('priceChangePercent')">
                 <div class="header-content">
                   24h Change
-                  <mat-icon class="sort-icon">{{getSortIcon('priceChangePercent')}}</mat-icon>
+                  <mat-icon class="sort-icon">{{ getSortIcon('priceChangePercent') }}</mat-icon>
                 </div>
               </th>
-              
+
               <th class="header-cell sortable" (click)="onSort('volume')">
                 <div class="header-content">
                   24h Volume
-                  <mat-icon class="sort-icon">{{getSortIcon('volume')}}</mat-icon>
+                  <mat-icon class="sort-icon">{{ getSortIcon('volume') }}</mat-icon>
                 </div>
               </th>
             </tr>
           </thead>
-          
+
           <tbody>
-            <tr *cdkVirtualFor="let symbol of filteredAndSortedData()" 
-                class="data-row">
-              
+            <tr *cdkVirtualFor="let symbol of filteredAndSortedData()" class="data-row">
               <td class="cell favorite-cell">
                 <button mat-icon-button (click)="toggleFavorite(symbol.symbol)">
                   <mat-icon [class.favorite]="isFavorite(symbol.symbol)">
-                    {{isFavorite(symbol.symbol) ? 'star' : 'star_border'}}
+                    {{ isFavorite(symbol.symbol) ? 'star' : 'star_border' }}
                   </mat-icon>
                 </button>
               </td>
-              
+
               <td class="cell symbol-cell">
                 <a [routerLink]="['/symbol', symbol.symbol]" class="symbol-link">
-                  {{symbol.symbol}}
+                  {{ symbol.symbol }}
                 </a>
               </td>
-              
-              <td class="cell"
-                  [class.positive]="getPriceChange(symbol) > 0"
-                  [class.negative]="getPriceChange(symbol) < 0">
+
+              <td
+                class="cell"
+                [class.positive]="getPriceChange(symbol) > 0"
+                [class.negative]="getPriceChange(symbol) < 0"
+              >
                 {{ symbol.lastPrice }}
               </td>
-              
-              <td class="cell"
-                  [class.positive]="+symbol.priceChangePercent > 0"
-                  [class.negative]="+symbol.priceChangePercent < 0">
-                {{symbol.priceChangePercent | number:'1.2-2'}}%
+
+              <td
+                class="cell"
+                [class.positive]="+symbol.priceChangePercent > 0"
+                [class.negative]="+symbol.priceChangePercent < 0"
+              >
+                {{ symbol.priceChangePercent | number: '1.2-2' }}%
               </td>
-              
+
               <td class="cell">
                 {{ formatVolume(symbol.volume) }}
               </td>
@@ -95,12 +98,11 @@
         </table>
       </cdk-virtual-scroll-viewport>
     </div>
-  }
-  @else {
+  } @else {
     <div class="empty-state">
       <mat-icon>info</mat-icon>
       <p>No symbols to display</p>
       <p class="search-hint">Try adjusting your search term</p>
     </div>
-  } 
+  }
 </div>

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class Favorite {
   private readonly STORAGE_KEY = 'binance-favorites';
@@ -19,7 +19,7 @@ export class Favorite {
   public toggleFavorite(symbol: string): void {
     const currentFavorites = this.favorites;
     const newFavorites = currentFavorites.includes(symbol)
-      ? currentFavorites.filter(s => s !== symbol)
+      ? currentFavorites.filter((s) => s !== symbol)
       : [...currentFavorites, symbol];
 
     this.favoritesSubject.next(newFavorites);

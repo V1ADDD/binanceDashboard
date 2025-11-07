@@ -8,9 +8,8 @@ describe('SymbolsTable', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SymbolsTable]
-    })
-    .compileComponents();
+      imports: [SymbolsTable],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(SymbolsTable);
     component = fixture.componentInstance;

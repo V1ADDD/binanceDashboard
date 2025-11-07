@@ -15,7 +15,7 @@ export class BinanceApi {
   }
 
   public get24hrTicker(symbol?: string): Observable<Ticker24hr | Ticker24hr[]> {
-    const url = symbol 
+    const url = symbol
       ? `${this.BASE_URL}/fapi/v1/ticker/24hr?symbol=${symbol}`
       : `${this.BASE_URL}/fapi/v1/ticker/24hr`;
     return this.http.get<Ticker24hr | Ticker24hr[]>(url);
@@ -23,11 +23,13 @@ export class BinanceApi {
 
   public getKlines(symbol: string, interval: string, limit: number = 500): Observable<Kline[]> {
     return this.http.get<Kline[]>(
-      `${this.BASE_URL}/fapi/v1/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`
+      `${this.BASE_URL}/fapi/v1/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`,
     );
   }
 
   public getOrderBook(symbol: string, limit: number = 20): Observable<OrderBook> {
-    return this.http.get<OrderBook>(`${this.BASE_URL}/fapi/v1/depth?symbol=${symbol}&limit=${limit}`);
+    return this.http.get<OrderBook>(
+      `${this.BASE_URL}/fapi/v1/depth?symbol=${symbol}&limit=${limit}`,
+    );
   }
 }

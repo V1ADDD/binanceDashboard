@@ -6,6 +6,4 @@ import { Component } from '@angular/core';
   templateUrl: './symbol-details.html',
   styleUrl: './symbol-details.scss',
 })
-export class SymbolDetails {
-
-}
+export class SymbolDetails {}

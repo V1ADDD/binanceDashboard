@@ -15,9 +15,9 @@ export interface RateLimit {
 }
 
 export interface AssetInfo {
-    asset: string;
-    marginAvailable: boolean;
-    autoAssetExchange: string;
+  asset: string;
+  marginAvailable: boolean;
+  autoAssetExchange: string;
 }
 
 export interface SymbolInfo {
@@ -47,18 +47,18 @@ export interface SymbolInfo {
 }
 
 export interface FilterInfo {
-    filterType: string;
-    maxPrice?: string;
-    minPrice?: string;
-    tickSize?: string;
-    maxQty?: string;
-    minQty?: string;
-    stepSize?: string;
-    limit?: number;
-    notional?: string;
-    multiplierUp?: string;
-    multiplierDown?: string;
-    multiplierDecimal?: string;
+  filterType: string;
+  maxPrice?: string;
+  minPrice?: string;
+  tickSize?: string;
+  maxQty?: string;
+  minQty?: string;
+  stepSize?: string;
+  limit?: number;
+  notional?: string;
+  multiplierUp?: string;
+  multiplierDown?: string;
+  multiplierDecimal?: string;
 }
 
 export interface Ticker24hr {
