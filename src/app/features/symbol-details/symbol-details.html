@@ -9,7 +9,7 @@
     @if (ticker24hr()) {
       <div class="price-info">
         <span class="price" [class]="getPriceChangeClass(ticker24hr()!.priceChange)">
-          {{ ticker24hr()!.lastPrice }}
+          {{ price() ? formatNumber(price()!) : formatNumber(ticker24hr()!.lastPrice) }}
         </span>
         <span class="change" [class]="getPriceChangeClass(ticker24hr()!.priceChange)">
           {{ ticker24hr()!.priceChange }} ({{ ticker24hr()!.priceChangePercent }}%)
@@ -113,6 +113,7 @@
                 <span class="time">Time</span>
                 <span class="price">Price</span>
                 <span class="quantity">Quantity</span>
+                <span class="total">Total</span>
               </div>
               @for (trade of recentTrades(); track $index) {
                 <div class="trade-row">
@@ -121,6 +122,7 @@
                     {{ formatNumber(trade.p) }}
                   </span>
                   <span class="quantity">{{ formatNumber(trade.q) }}</span>
+                  <span class="total">{{ formatNumber(calculateMul(trade.q, trade.p)) }}</span>
                 </div>
               }
               @if (recentTrades().length === 0) {

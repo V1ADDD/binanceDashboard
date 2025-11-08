@@ -6,6 +6,7 @@ import {
   AggTradeEvent,
   DepthEvent,
   OrderBook,
+  PriceEvent,
   Ticker24hr,
 } from '../../shared/models/binance-types';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -35,6 +36,7 @@ export class SymbolDetails implements OnInit {
   public recentTrades = signal<AggTradeEvent[]>([]);
 
   public ticker24hr = signal<Ticker24hr | null>(null);
+  public price = signal<string | null>('');
 
   public activeTab = signal<number>(0);
 
@@ -81,6 +83,15 @@ export class SymbolDetails implements OnInit {
         next: (data) => this.updateRecentTrades(data),
         error: (error) => console.error('WebSocket error (trades):', error),
       });
+
+    // Websocket для обновления цены
+    this.binanceWebSocket
+      .createPriceStream(symbol)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (data) => this.updatePrice(data),
+        error: (error) => console.error('WebSocket error (price):', error),
+      });
   }
 
   private load24hrTicker(symbol: string): Promise<void> {
@@ -109,6 +120,13 @@ export class SymbolDetails implements OnInit {
         bids: orderBook.b,
         asks: orderBook.a,
       });
+    }
+  }
+
+  private updatePrice(price: PriceEvent): void {
+    const currentPrice = this.price();
+    if (currentPrice !== price.p) {
+      this.price.set(price.p);
     }
   }
 

@@ -1,6 +1,4 @@
-// @ts-check
 const eslint = require("@eslint/js");
-// @ts-ignore
 const tseslint = require("typescript-eslint");
 const angular = require("angular-eslint");
 

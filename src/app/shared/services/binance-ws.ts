@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
-import { AggTradeEvent, DepthEvent, KlineEvent } from '../models/binance-types';
+import { AggTradeEvent, DepthEvent, KlineEvent, PriceEvent } from '../models/binance-types';
 
 @Injectable({
   providedIn: 'root',
@@ -14,6 +14,10 @@ export class BinanceWs {
     return webSocket<AggTradeEvent>(`${this.baseUrl}/${stream}`);
   }
 
+  public createPriceStream(symbol: string): WebSocketSubject<PriceEvent> {
+    const stream = `${symbol.toLowerCase()}@markPrice`;
+    return webSocket<PriceEvent>(`${this.baseUrl}/${stream}`);
+  }
   public createDepthStream(symbol: string): WebSocketSubject<DepthEvent> {
     const stream = `${symbol.toLowerCase()}@depth20@100ms`;
     return webSocket<DepthEvent>(`${this.baseUrl}/${stream}`);

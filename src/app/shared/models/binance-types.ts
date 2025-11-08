@@ -128,6 +128,17 @@ export interface DepthEvent {
   a: string[][]; // [0] price, [1] quantity
 }
 
+export interface PriceEvent {
+  e: string; // Event type
+  E: number; // Event time
+  s: string; // Symbol
+  p: string; // Mark price
+  i: string; // Index price
+  P: string; // Estimated Settle Price, only useful in the last hour before the settlement starts
+  r: string; // Funding rate
+  T: number; // Next funding time
+}
+
 export interface KlineEvent {
   e: string; // Event type
   E: number; // Event time
