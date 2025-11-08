@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, input, output, computed, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { FormsModule } from '@angular/forms';
@@ -8,11 +7,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { Ticker24hr } from '../../shared/models/binance-types';
+import { DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-symbols-table',
   imports: [
-    CommonModule,
+    DecimalPipe,
     RouterLink,
     ScrollingModule,
     MatInputModule,

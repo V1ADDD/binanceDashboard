@@ -9,10 +9,17 @@ html {
   @include mat.theme(
     (
       color: (
-        primary: mat.$rose-palette,
-        tertiary: mat.$red-palette,
+        primary: mat.$cyan-palette,
+        tertiary: mat.$cyan-palette,
+        theme-type: light,
       ),
-      typography: Roboto,
+      typography: (
+        plain-family: Roboto,
+        brand-family: Roboto,
+        bold-weight: 900,
+        medium-weight: 600,
+        regular-weight: 400,
+      ),
       density: 0,
     )
   );

@@ -99,13 +99,8 @@ export interface OrderBook {
   lastUpdateId: number;
   E: number;
   T: number;
-  bids: OrderBookLevel[];
-  asks: OrderBookLevel[];
-}
-
-export interface OrderBookLevel {
-  price: string;
-  quantity: string;
+  bids: string[][]; // [0] price, [1] quantity
+  asks: string[][]; // [0] price, [1] quantity
 }
 
 // WebSocket
@@ -129,8 +124,8 @@ export interface DepthEvent {
   U: number; // First update ID in event
   u: number; // Final update ID in event
   pu: number; // Final update Id in last stream(ie `u` in last stream)
-  b: OrderBookLevel[]; // Bids to update
-  a: OrderBookLevel[]; // Asks to update
+  b: string[][]; // [0] price, [1] quantity
+  a: string[][]; // [0] price, [1] quantity
 }
 
 export interface KlineEvent {

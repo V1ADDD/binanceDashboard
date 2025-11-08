@@ -1,1 +1,137 @@
-<p>symbol-details works!</p>
+<div class="symbol-details">
+  <div class="header">
+    <button mat-icon-button (click)="goBack()" class="back-button">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+
+    <h2>{{ symbol() }}</h2>
+
+    @if (ticker24hr()) {
+      <div class="price-info">
+        <span class="price" [class]="getPriceChangeClass(ticker24hr()!.priceChange)">
+          {{ ticker24hr()!.lastPrice }}
+        </span>
+        <span class="change" [class]="getPriceChangeClass(ticker24hr()!.priceChange)">
+          {{ ticker24hr()!.priceChange }} ({{ ticker24hr()!.priceChangePercent }}%)
+        </span>
+      </div>
+    }
+  </div>
+
+  @if (isLoading()) {
+    <div class="loading-state">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>Loading {{ symbol() }} data...</p>
+    </div>
+  }
+
+  @if (error() && !isLoading()) {
+    <div class="error-state">
+      <mat-icon>error_outline</mat-icon>
+      <p>{{ error() }}</p>
+      <button mat-button (click)="goBack()">Back to Dashboard</button>
+    </div>
+  }
+
+  @if (!isLoading() && !error()) {
+    <div class="content">
+      @if (ticker24hr()) {
+        <div class="stats-grid">
+          <mat-card class="stat-card">
+            <mat-card-header>
+              <mat-card-title>24h Statistics</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="stat-row">
+                <span class="label">High</span>
+                <span class="value positive">{{ ticker24hr()!.highPrice }}</span>
+              </div>
+              <div class="stat-row">
+                <span class="label">Low</span>
+                <span class="value negative">{{ ticker24hr()!.lowPrice }}</span>
+              </div>
+              <div class="stat-row">
+                <span class="label">Volume</span>
+                <span class="value">{{ ticker24hr()!.volume }}</span>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      }
+
+      <mat-tab-group (selectedIndexChange)="onTabChange($event)" [selectedIndex]="activeTab()">
+        <mat-tab label="Order Book">
+          <div class="tab-content">
+            @if (orderBook()) {
+              <div class="spread">
+                <span>Spread: {{ calculateSpread(orderBook()!) }}</span>
+              </div>
+              <div class="order-book">
+                <div class="order-book-section">
+                  <h3>Bids (Buy)</h3>
+                  <div class="order-list bids">
+                    <div class="order-row header">
+                      <span class="price">Price</span>
+                      <span class="quantity">Quantity</span>
+                      <span class="total">Total</span>
+                    </div>
+                    @for (bid of orderBook()!.bids; track $index) {
+                      <div class="order-row">
+                        <span class="price">{{ formatNumber(bid[0]) }}</span>
+                        <span class="quantity">{{ formatNumber(bid[1]) }}</span>
+                        <span class="total">{{ formatNumber(calculateMul(bid[0], bid[1])) }}</span>
+                      </div>
+                    }
+                  </div>
+                </div>
+
+                <div class="order-book-section">
+                  <h3>Asks (Sell)</h3>
+                  <div class="order-list asks">
+                    <div class="order-row header">
+                      <span class="price">Price</span>
+                      <span class="quantity">Quantity</span>
+                      <span class="total">Total</span>
+                    </div>
+                    @for (ask of orderBook()!.asks; track $index) {
+                      <div class="order-row">
+                        <span class="price">{{ formatNumber(ask[0]) }}</span>
+                        <span class="quantity">{{ formatNumber(ask[1]) }}</span>
+                        <span class="total">{{ formatNumber(calculateMul(ask[0], ask[1])) }}</span>
+                      </div>
+                    }
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </mat-tab>
+        <mat-tab label="Recent Trades">
+          <div class="tab-content">
+            <div class="recent-trades">
+              <div class="trade-row header">
+                <span class="time">Time</span>
+                <span class="price">Price</span>
+                <span class="quantity">Quantity</span>
+              </div>
+              @for (trade of recentTrades(); track $index) {
+                <div class="trade-row">
+                  <span class="time">{{ trade.T | date: 'HH:mm:ss' }}</span>
+                  <span class="price" [class]="trade.m ? 'negative' : 'positive'">
+                    {{ formatNumber(trade.p) }}
+                  </span>
+                  <span class="quantity">{{ formatNumber(trade.q) }}</span>
+                </div>
+              }
+              @if (recentTrades().length === 0) {
+                <div class="no-trades">
+                  <p>No recent trades</p>
+                </div>
+              }
+            </div>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </div>
+  }
+</div>
