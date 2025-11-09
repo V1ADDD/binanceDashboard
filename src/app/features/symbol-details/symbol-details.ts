@@ -15,6 +15,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatTabsModule } from '@angular/material/tabs';
 import { DatePipe } from '@angular/common';
 import { BinanceWs } from '../../shared/services/binance-ws';
+import { forkJoin, Observable, of } from 'rxjs';
+import { catchError, finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-symbol-details',
@@ -56,13 +58,28 @@ export class SymbolDetails implements OnInit {
   private loadSymbolData(symbol: string): void {
     this.isLoading.set(true);
 
-    Promise.all([
-      this.load24hrTicker(symbol),
-      // this.loadKlines(symbol),
-      this.loadOrderBook(symbol),
-    ]).finally(() => {
-      this.isLoading.set(false);
-    });
+    forkJoin({
+      ticker: this.load24hrTicker(symbol),
+      orderBook: this.loadOrderBook(symbol),
+    })
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.isLoading.set(false)),
+      )
+      .subscribe({
+        next: (value) => {
+          if (value.ticker) {
+            this.ticker24hr.set(value.ticker as Ticker24hr);
+          }
+          if (value.orderBook) {
+            this.orderBook.set(value.orderBook);
+          }
+        },
+        error: (error) => {
+          console.error('Error loading symbol data:', error);
+          this.error.set('Failed to load symbol data');
+        },
+      });
   }
 
   private setupWebSockets(symbol: string): void {
@@ -94,22 +111,24 @@ export class SymbolDetails implements OnInit {
       });
   }
 
-  private load24hrTicker(symbol: string): Promise<void> {
-    return new Promise((resolve) => {
-      this.binanceApi
-        .get24hrTicker(symbol)
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe({
-          next: (data) => {
-            this.ticker24hr.set(data as Ticker24hr);
-            resolve();
-          },
-          error: (error) => {
-            console.error('Error loading 24hr ticker:', error);
-            resolve();
-          },
-        });
-    });
+  private load24hrTicker(symbol: string): Observable<Ticker24hr[] | Ticker24hr | null> {
+    return this.binanceApi.get24hrTicker(symbol).pipe(
+      takeUntilDestroyed(this.destroyRef),
+      catchError((error) => {
+        console.error('Error loading 24hr ticker:', error);
+        return of(null);
+      }),
+    );
+  }
+
+  private loadOrderBook(symbol: string): Observable<OrderBook | null> {
+    return this.binanceApi.getOrderBook(symbol, 20).pipe(
+      takeUntilDestroyed(this.destroyRef),
+      catchError((error) => {
+        console.error('Error loading order book:', error);
+        return of(null);
+      }),
+    );
   }
 
   private updateOrderBook(orderBook: DepthEvent): void {
@@ -139,24 +158,6 @@ export class SymbolDetails implements OnInit {
 
     const updatedTrades = [newTrade, ...currentTrades.slice(0, 19)];
     this.recentTrades.set(updatedTrades);
-  }
-
-  private loadOrderBook(symbol: string): Promise<void> {
-    return new Promise((resolve) => {
-      this.binanceApi
-        .getOrderBook(symbol, 20)
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe({
-          next: (data) => {
-            this.orderBook.set(data);
-            resolve();
-          },
-          error: (error) => {
-            console.error('Error loading order book:', error);
-            resolve();
-          },
-        });
-    });
   }
 
   public goBack(): void {
