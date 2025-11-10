@@ -2,19 +2,13 @@ import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router } from '@angular/router';
-import {
-  AggTradeEvent,
-  OrderBook,
-  PriceEvent,
-  Ticker24hr,
-} from '../../shared/models/binance-types';
+import { OrderBook, PriceEvent, Ticker24hr } from '../../shared/models/binance-types';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { BinanceApi } from '../../shared/services/binance-api';
 import { MatCardModule } from '@angular/material/card';
 import { MatTabsModule } from '@angular/material/tabs';
 import { BinanceWs } from '../../shared/services/binance-ws';
-import { Observable, of } from 'rxjs';
-import { catchError, finalize } from 'rxjs/operators';
+import { finalize } from 'rxjs/operators';
 import { OrderBookComponent } from '../order-book/order-book';
 import { RecentTrades } from '../recent-trades/recent-trades';
 
@@ -40,9 +34,7 @@ export class SymbolDetails implements OnInit {
 
   public error = signal<string | null>(null);
   public isLoading = signal(true);
-  public orderBook = signal<OrderBook | null>(null);
   public symbol = signal<string>('');
-  public recentTrades = signal<AggTradeEvent[]>([]);
 
   public ticker24hr = signal<Ticker24hr | null>(null);
   public price = signal<string | null>('');
@@ -54,43 +46,27 @@ export class SymbolDetails implements OnInit {
       const symbol = params.get('symbol');
       if (symbol) {
         this.symbol.set(symbol);
-        this.loadSymbolData(symbol);
-        this.setupWebSockets(symbol);
+
+        this.isLoading.set(true);
+        this.binanceApi
+          .get24hrTicker(symbol)
+          .pipe(
+            takeUntilDestroyed(this.destroyRef),
+            finalize(() => this.isLoading.set(false)),
+          )
+          .subscribe((value) => this.ticker24hr.set(value as Ticker24hr));
+
+        this.binanceWebSocket
+          .createPriceStream(symbol)
+          .pipe(takeUntilDestroyed(this.destroyRef))
+          .subscribe({
+            next: (data) => this.updatePrice(data),
+            error: (error) => console.error('WebSocket error (price):', error),
+          });
       } else {
         this.error.set('Symbol not found');
       }
     });
-  }
-
-  private loadSymbolData(symbol: string): void {
-    this.isLoading.set(true);
-    this.load24hrTicker(symbol)
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        finalize(() => this.isLoading.set(false)),
-      )
-      .subscribe((value) => this.ticker24hr.set(value as Ticker24hr));
-  }
-
-  private setupWebSockets(symbol: string): void {
-    // Websocket для обновления цены
-    this.binanceWebSocket
-      .createPriceStream(symbol)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (data) => this.updatePrice(data),
-        error: (error) => console.error('WebSocket error (price):', error),
-      });
-  }
-
-  private load24hrTicker(symbol: string): Observable<Ticker24hr[] | Ticker24hr | null> {
-    return this.binanceApi.get24hrTicker(symbol).pipe(
-      takeUntilDestroyed(this.destroyRef),
-      catchError((error) => {
-        console.error('Error loading 24hr ticker:', error);
-        return of(null);
-      }),
-    );
   }
 
   private updatePrice(price: PriceEvent): void {
