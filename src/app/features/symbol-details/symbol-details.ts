@@ -4,7 +4,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   AggTradeEvent,
-  DepthEvent,
   OrderBook,
   PriceEvent,
   Ticker24hr,
@@ -13,14 +12,22 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { BinanceApi } from '../../shared/services/binance-api';
 import { MatCardModule } from '@angular/material/card';
 import { MatTabsModule } from '@angular/material/tabs';
-import { DatePipe } from '@angular/common';
 import { BinanceWs } from '../../shared/services/binance-ws';
-import { forkJoin, Observable, of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
+import { OrderBookComponent } from '../order-book/order-book';
+import { RecentTrades } from '../recent-trades/recent-trades';
 
 @Component({
   selector: 'app-symbol-details',
-  imports: [MatIconModule, MatProgressSpinnerModule, MatCardModule, MatTabsModule, DatePipe],
+  imports: [
+    MatIconModule,
+    MatProgressSpinnerModule,
+    MatCardModule,
+    MatTabsModule,
+    OrderBookComponent,
+    RecentTrades,
+  ],
   templateUrl: './symbol-details.html',
   styleUrl: './symbol-details.scss',
 })
@@ -57,50 +64,15 @@ export class SymbolDetails implements OnInit {
 
   private loadSymbolData(symbol: string): void {
     this.isLoading.set(true);
-
-    forkJoin({
-      ticker: this.load24hrTicker(symbol),
-      orderBook: this.loadOrderBook(symbol),
-    })
+    this.load24hrTicker(symbol)
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         finalize(() => this.isLoading.set(false)),
       )
-      .subscribe({
-        next: (value) => {
-          if (value.ticker) {
-            this.ticker24hr.set(value.ticker as Ticker24hr);
-          }
-          if (value.orderBook) {
-            this.orderBook.set(value.orderBook);
-          }
-        },
-        error: (error) => {
-          console.error('Error loading symbol data:', error);
-          this.error.set('Failed to load symbol data');
-        },
-      });
+      .subscribe((value) => this.ticker24hr.set(value as Ticker24hr));
   }
 
   private setupWebSockets(symbol: string): void {
-    // WebSocket для стакана ордеров
-    this.binanceWebSocket
-      .createDepthStream(symbol)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (data) => this.updateOrderBook(data),
-        error: (error) => console.error('WebSocket error (depth):', error),
-      });
-
-    // WebSocket для агрегированных сделок
-    this.binanceWebSocket
-      .createAggTradeStream(symbol)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (data) => this.updateRecentTrades(data),
-        error: (error) => console.error('WebSocket error (trades):', error),
-      });
-
     // Websocket для обновления цены
     this.binanceWebSocket
       .createPriceStream(symbol)
@@ -121,43 +93,11 @@ export class SymbolDetails implements OnInit {
     );
   }
 
-  private loadOrderBook(symbol: string): Observable<OrderBook | null> {
-    return this.binanceApi.getOrderBook(symbol, 20).pipe(
-      takeUntilDestroyed(this.destroyRef),
-      catchError((error) => {
-        console.error('Error loading order book:', error);
-        return of(null);
-      }),
-    );
-  }
-
-  private updateOrderBook(orderBook: DepthEvent): void {
-    const currentOrders = this.orderBook();
-    if (currentOrders) {
-      this.orderBook.set({
-        ...currentOrders,
-        bids: orderBook.b,
-        asks: orderBook.a,
-      });
-    }
-  }
-
   private updatePrice(price: PriceEvent): void {
     const currentPrice = this.price();
     if (currentPrice !== price.p) {
       this.price.set(price.p);
     }
-  }
-
-  private updateRecentTrades(tradeEvent: AggTradeEvent): void {
-    const currentTrades = this.recentTrades();
-    const newTrade: AggTradeEvent = {
-      ...tradeEvent,
-      T: tradeEvent.T || Date.now(),
-    };
-
-    const updatedTrades = [newTrade, ...currentTrades.slice(0, 19)];
-    this.recentTrades.set(updatedTrades);
   }
 
   public goBack(): void {

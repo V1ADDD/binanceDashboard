@@ -1,0 +1,39 @@
+.tab-content {
+  padding: 16px 0;
+}
+
+.recent-trades {
+  .trade-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 16px;
+    padding: 8px 12px;
+    border-bottom: 1px solid #f0f0f0;
+
+    &:first-child {
+      font-weight: 500;
+      border-bottom: 3px solid #f0f0f0;
+    }
+
+    .time,
+    .price,
+    .quantity,
+    .total {
+      text-align: center;
+    }
+  }
+
+  .no-trades {
+    text-align: center;
+    padding: 40px;
+    color: rgba(0, 0, 0, 0.6);
+  }
+}
+
+.positive {
+  color: #00c853;
+}
+
+.negative {
+  color: #ff3d00;
+}

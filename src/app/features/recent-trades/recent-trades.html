@@ -1,0 +1,25 @@
+<div class="tab-content">
+  <div class="recent-trades">
+    <div class="trade-row header">
+      <span class="time">Time</span>
+      <span class="price">Price</span>
+      <span class="quantity">Quantity</span>
+      <span class="total">Total</span>
+    </div>
+    @for (trade of recentTrades(); track $index) {
+      <div class="trade-row">
+        <span class="time">{{ trade.T | date: 'HH:mm:ss' }}</span>
+        <span class="price" [class]="trade.m ? 'negative' : 'positive'">
+          {{ formatNumber(trade.p) }}
+        </span>
+        <span class="quantity">{{ formatNumber(trade.q) }}</span>
+        <span class="total">{{ formatNumber(calculateMul(trade.q, trade.p)) }}</span>
+      </div>
+    }
+    @if (recentTrades().length === 0) {
+      <div class="no-trades">
+        <p>No recent trades</p>
+      </div>
+    }
+  </div>
+</div>

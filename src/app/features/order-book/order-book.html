@@ -1,0 +1,44 @@
+<div class="tab-content">
+  @if (orderBook()) {
+    <div class="spread">
+      <span>Spread: {{ calculateSpread(orderBook()!) }}</span>
+    </div>
+    <div class="order-book">
+      <div class="order-book-section">
+        <h3>Bids (Buy)</h3>
+        <div class="order-list bids">
+          <div class="order-row header">
+            <span class="price">Price</span>
+            <span class="quantity">Quantity</span>
+            <span class="total">Total</span>
+          </div>
+          @for (bid of orderBook()!.bids; track $index) {
+            <div class="order-row">
+              <span class="price">{{ formatNumber(bid[0]) }}</span>
+              <span class="quantity">{{ formatNumber(bid[1]) }}</span>
+              <span class="total">{{ formatNumber(calculateMul(bid[0], bid[1])) }}</span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="order-book-section">
+        <h3>Asks (Sell)</h3>
+        <div class="order-list asks">
+          <div class="order-row header">
+            <span class="price">Price</span>
+            <span class="quantity">Quantity</span>
+            <span class="total">Total</span>
+          </div>
+          @for (ask of orderBook()!.asks; track $index) {
+            <div class="order-row">
+              <span class="price">{{ formatNumber(ask[0]) }}</span>
+              <span class="quantity">{{ formatNumber(ask[1]) }}</span>
+              <span class="total">{{ formatNumber(calculateMul(ask[0], ask[1])) }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }
+</div>
