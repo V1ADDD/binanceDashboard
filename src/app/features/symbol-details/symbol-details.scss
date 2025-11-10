@@ -8,28 +8,70 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 16px;
   border-bottom: 1px solid #e0e0e0;
+  background: white;
+  padding: 16px;
 
   h2 {
     margin: 0;
     font-size: 24px;
     font-weight: 500;
+    min-width: 120px;
+  }
+}
+
+.price-stats-container {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  margin-left: auto;
+}
+
+.price-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  min-width: 140px;
+
+  .price {
+    font-size: 20px;
+    font-weight: 600;
   }
 
-  .price-info {
-    margin-left: auto;
+  .change {
+    font-size: 14px;
+  }
+}
+
+.stats-header {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+
+  .stat-item {
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
+    align-items: center;
+    text-align: center;
+    min-width: 80px;
 
-    .price {
-      font-size: 20px;
-      font-weight: 600;
+    .label {
+      font-size: 12px;
+      color: rgba(0, 0, 0, 0.6);
+      margin-bottom: 2px;
     }
 
-    .change {
+    .value {
       font-size: 14px;
+      font-weight: 500;
+
+      &.positive {
+        color: #00c853;
+      }
+
+      &.negative {
+        color: #ff3d00;
+      }
     }
   }
 }
@@ -76,35 +118,6 @@
   flex: 1;
   padding: 16px;
   overflow: auto;
-}
-
-.stats-grid {
-  margin-bottom: 24px;
-
-  .stat-card {
-    max-width: 400px;
-    gap: 12px;
-
-    .stat-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 8px 0;
-      border-bottom: 1px solid #f0f0f0;
-
-      &:last-child {
-        border-bottom: none;
-      }
-
-      .label {
-        color: rgba(0, 0, 0, 0.6);
-      }
-
-      .value {
-        font-weight: 500;
-      }
-    }
-  }
 }
 
 .tab-content {

@@ -5,15 +5,30 @@
     </button>
 
     <h2>{{ symbol() }}</h2>
-
     @if (ticker24hr()) {
-      <div class="price-info">
-        <span class="price" [class]="getPriceChangeClass(ticker24hr()!.priceChange)">
-          {{ price() ? formatNumber(price()!) : formatNumber(ticker24hr()!.lastPrice) }}
-        </span>
-        <span class="change" [class]="getPriceChangeClass(ticker24hr()!.priceChange)">
-          {{ ticker24hr()!.priceChange }} ({{ ticker24hr()!.priceChangePercent }}%)
-        </span>
+      <div class="price-stats-container">
+        <div class="stats-header">
+          <div class="stat-item">
+            <span class="label">24hr High</span>
+            <span class="value positive">{{ formatNumber(ticker24hr()!.highPrice) }}</span>
+          </div>
+          <div class="stat-item">
+            <span class="label">24hr Low</span>
+            <span class="value negative">{{ formatNumber(ticker24hr()!.lowPrice) }}</span>
+          </div>
+          <div class="stat-item">
+            <span class="label">24hr Volume</span>
+            <span class="value">{{ formatNumber(ticker24hr()!.volume) }}</span>
+          </div>
+        </div>
+        <div class="price-info">
+          <span class="price" [class]="getPriceChangeClass(ticker24hr()!.priceChange)">
+            {{ price() ? formatNumber(price()!) : formatNumber(ticker24hr()!.lastPrice) }}
+          </span>
+          <span class="change" [class]="getPriceChangeClass(ticker24hr()!.priceChange)">
+            {{ ticker24hr()!.priceChange }} ({{ ticker24hr()!.priceChangePercent }}%)
+          </span>
+        </div>
       </div>
     }
   </div>
@@ -35,30 +50,6 @@
 
   @if (!isLoading() && !error()) {
     <div class="content">
-      @if (ticker24hr()) {
-        <div class="stats-grid">
-          <mat-card class="stat-card">
-            <mat-card-header>
-              <mat-card-title>24h Statistics</mat-card-title>
-            </mat-card-header>
-            <mat-card-content>
-              <div class="stat-row">
-                <span class="label">High</span>
-                <span class="value positive">{{ ticker24hr()!.highPrice }}</span>
-              </div>
-              <div class="stat-row">
-                <span class="label">Low</span>
-                <span class="value negative">{{ ticker24hr()!.lowPrice }}</span>
-              </div>
-              <div class="stat-row">
-                <span class="label">Volume</span>
-                <span class="value">{{ ticker24hr()!.volume }}</span>
-              </div>
-            </mat-card-content>
-          </mat-card>
-        </div>
-      }
-
       <mat-tab-group (selectedIndexChange)="onTabChange($event)" [selectedIndex]="activeTab()">
         <mat-tab label="Order Book">
           <div class="tab-content">
