@@ -12,6 +12,7 @@ import { finalize } from 'rxjs/operators';
 import { OrderBookComponent } from '../order-book/order-book';
 import { RecentTrades } from '../recent-trades/recent-trades';
 import { SymbolChart } from '../symbol-chart/symbol-chart';
+import { MatIconButton } from '@angular/material/button';
 
 @Component({
   selector: 'app-symbol-details',
@@ -23,6 +24,7 @@ import { SymbolChart } from '../symbol-chart/symbol-chart';
     OrderBookComponent,
     RecentTrades,
     SymbolChart,
+    MatIconButton,
   ],
   templateUrl: './symbol-details.html',
   styleUrl: './symbol-details.scss',

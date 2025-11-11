@@ -1,0 +1,45 @@
+$primary-color: #00c853;
+$negative-color: #ff3d00;
+$warning-color: #ffd740;
+
+$light-surface: #ffffff;
+$light-on-surface: #000000;
+$light-background: #f5f5f5;
+$light-border: #e0e0e0;
+$light-hover: #f5f5f5;
+$light-even-row: #fafafa;
+$light-text-primary: rgba(0, 0, 0, 0.87);
+$light-text-secondary: rgba(0, 0, 0, 0.6);
+$light-text-disabled: rgba(0, 0, 0, 0.38);
+
+$dark-surface: #121212;
+$dark-on-surface: #ffffff;
+$dark-background: #1e1e1e;
+$dark-border: #333333;
+$dark-hover: #2a2a2a;
+$dark-even-row: #1a1a1a;
+$dark-text-primary: rgba(255, 255, 255, 0.87);
+$dark-text-secondary: rgba(255, 255, 255, 0.6);
+$dark-text-disabled: rgba(255, 255, 255, 0.38);
+
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+$spacing-xxl: 48px;
+
+$font-family: Roboto, 'Helvetica Neue', sans-serif;
+$font-size-xs: 11px;
+$font-size-sm: 12px;
+$font-size-md: 14px;
+$font-size-lg: 16px;
+$font-size-xl: 20px;
+$font-size-xxl: 24px;
+
+$breakpoint-sm: 600px;
+$breakpoint-md: 960px;
+$breakpoint-lg: 1280px;
+$breakpoint-xl: 1920px;
+
+$z-index-overlay: 10;

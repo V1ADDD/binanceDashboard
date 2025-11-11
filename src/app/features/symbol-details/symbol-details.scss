@@ -1,121 +1,84 @@
+@use '../../shared/styles/variables' as v;
+@use '../../shared/styles/mixins' as m;
+
 .symbol-details {
   height: 100%;
-  display: flex;
-  flex-direction: column;
+  @include m.flex-column;
 }
 
 .header {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  border-bottom: 1px solid #e0e0e0;
-  background: white;
-  padding: 16px;
+  @include m.flex-center;
+  gap: v.$spacing-md;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  padding: v.$spacing-md;
 
   h2 {
     margin: 0;
-    font-size: 24px;
+    font-size: v.$font-size-xxl;
     font-weight: 500;
     min-width: 120px;
+    color: var(--text-primary);
   }
 }
 
 .price-stats-container {
-  display: flex;
-  align-items: center;
-  gap: 32px;
+  @include m.flex-center;
+  gap: v.$spacing-xl;
   margin-left: auto;
 }
 
 .price-info {
-  display: flex;
-  flex-direction: column;
+  @include m.flex-column;
   align-items: flex-end;
   min-width: 140px;
 
   .price {
-    font-size: 20px;
+    font-size: v.$font-size-xl;
     font-weight: 600;
+    color: var(--text-primary);
   }
 
   .change {
-    font-size: 14px;
+    font-size: v.$font-size-md;
   }
 }
 
 .stats-header {
   display: flex;
-  gap: 24px;
+  gap: v.$spacing-lg;
   align-items: center;
 
   .stat-item {
-    display: flex;
-    flex-direction: column;
+    @include m.flex-column;
     align-items: center;
     text-align: center;
     min-width: 80px;
 
     .label {
-      font-size: 12px;
-      color: rgba(0, 0, 0, 0.6);
+      font-size: v.$font-size-sm;
+      color: var(--text-secondary);
       margin-bottom: 2px;
     }
 
     .value {
-      font-size: 14px;
+      font-size: v.$font-size-md;
       font-weight: 500;
-
-      &.positive {
-        color: #00c853;
-      }
-
-      &.negative {
-        color: #ff3d00;
-      }
     }
   }
 }
 
-.loading-state,
-.error-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 40px;
-  gap: 16px;
-
-  p {
-    margin: 0;
-    text-align: center;
-  }
-}
-
-.error-state {
-  color: #f44336;
-
-  mat-icon {
-    font-size: 48px;
-    width: 48px;
-    height: 48px;
-  }
-}
-
-.positive {
-  color: #00c853;
-}
-
-.negative {
-  color: #ff3d00;
-}
-
 .back-button {
-  margin-right: 8px;
+  margin-right: v.$spacing-sm;
   cursor: pointer;
 }
 
 .content {
   flex: 1;
-  padding: 16px;
+  padding: v.$spacing-md;
   overflow: auto;
+  background: var(--background);
+  .tab-label {
+    color: var(--text-primary);
+  }
 }

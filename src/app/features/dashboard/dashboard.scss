@@ -1,40 +1,39 @@
+@use '../../shared/styles/variables' as v;
+@use '../../shared/styles/mixins' as m;
+
 .dashboard {
   height: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+  @include m.flex-column;
+  gap: v.$spacing-md;
 }
 
 .dashboard-header {
-  display: flex;
-  justify-content: space-between;
+  @include m.flex-between;
   align-items: flex-start;
-  padding: 0 8px;
-  gap: 16px;
+  padding: 0 v.$spacing-sm;
+  gap: v.$spacing-md;
 }
 
 .header-left {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+  @include m.flex-column;
+  gap: v.$spacing-xs;
 }
 
 .header-right {
-  display: flex;
-  align-items: center;
-  gap: 16px;
+  @include m.flex-center;
+  gap: v.$spacing-md;
 }
 
 h1 {
   margin: 0;
-  font-size: 24px;
+  font-size: v.$font-size-xxl;
   font-weight: 500;
-  color: rgba(0, 0, 0, 0.87);
+  color: var(--text-primary);
 }
 
 .last-update {
-  font-size: 12px;
-  color: rgba(0, 0, 0, 0.6);
+  font-size: v.$font-size-sm;
+  color: var(--text-secondary);
 }
 
 .content {
@@ -44,33 +43,22 @@ h1 {
 }
 
 .loading-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(255, 255, 255, 0.9);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
+  @include m.overlay;
+  @include m.flex-column;
+  @include m.flex-center;
+  background: var(--background);
+  z-index: v.$z-index-overlay;
+
+  .dark-theme & {
+    background: rgba(0, 0, 0, 0.9);
+  }
 
   p {
-    margin-top: 16px;
-    color: rgba(0, 0, 0, 0.6);
+    margin-top: v.$spacing-md;
+    color: var(--text-secondary);
   }
 }
 
 button.loading {
   animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
 }

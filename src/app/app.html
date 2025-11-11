@@ -1,5 +1,8 @@
-<mat-toolbar color="primary">
+<mat-toolbar>
   <span>Binance Futures Dashboard</span>
+  <button mat-icon-button (click)="toggleTheme()">
+    <mat-icon>{{ isDarkTheme ? 'light_mode' : 'dark_mode' }}</mat-icon>
+  </button>
 </mat-toolbar>
 <main class="main-content">
   <router-outlet></router-outlet>

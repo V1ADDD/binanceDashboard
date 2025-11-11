@@ -1,0 +1,43 @@
+@use 'variables' as v;
+@use 'mixins' as m;
+
+.positive {
+  color: v.$primary-color;
+  font-weight: 500;
+}
+
+.negative {
+  color: v.$negative-color;
+  font-weight: 500;
+}
+
+.favorite {
+  color: v.$warning-color;
+}
+
+.loading-state,
+.error-state {
+  @include m.flex-column;
+  @include m.flex-center;
+  padding: v.$spacing-xxl;
+  gap: v.$spacing-md;
+
+  p {
+    margin: 0;
+    text-align: center;
+  }
+}
+
+.error-state {
+  color: v.$negative-color;
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+  }
+}
+
+.tab-content {
+  padding: v.$spacing-md 0;
+}

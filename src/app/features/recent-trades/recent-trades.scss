@@ -1,18 +1,17 @@
-.tab-content {
-  padding: 16px 0;
-}
+@use '../../shared/styles/variables' as v;
+@use '../../shared/styles/mixins' as m;
 
 .recent-trades {
   .trade-row {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
-    gap: 16px;
-    padding: 8px 12px;
-    border-bottom: 1px solid #f0f0f0;
+    gap: v.$spacing-md;
+    padding: v.$spacing-sm v.$spacing-md;
+    border-bottom: 1px solid var(--border);
 
     &:first-child {
       font-weight: 500;
-      border-bottom: 3px solid #f0f0f0;
+      border-bottom: 3px solid var(--border);
     }
 
     .time,
@@ -25,15 +24,7 @@
 
   .no-trades {
     text-align: center;
-    padding: 40px;
-    color: rgba(0, 0, 0, 0.6);
+    padding: v.$spacing-xxl;
+    color: var(--text-secondary);
   }
-}
-
-.positive {
-  color: #00c853;
-}
-
-.negative {
-  color: #ff3d00;
 }

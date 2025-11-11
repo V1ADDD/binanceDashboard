@@ -22,7 +22,7 @@
           </div>
         </div>
         <div class="price-info">
-          <span class="price" [class]="getPriceChangeClass(ticker24hr()!.priceChange)">
+          <span class="price">
             {{ price() ? formatNumber(price()!) : formatNumber(ticker24hr()!.lastPrice) }}
           </span>
           <span class="change" [class]="getPriceChangeClass(ticker24hr()!.priceChange)">
@@ -51,13 +51,22 @@
   @if (!isLoading() && !error()) {
     <div class="content">
       <mat-tab-group (selectedIndexChange)="onTabChange($event)" [selectedIndex]="activeTab()">
-        <mat-tab label="Symbol Chart">
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <span class="tab-label">Symbol Chart</span>
+          </ng-template>
           <app-symbol-chart [symbol]="symbol()"></app-symbol-chart>
         </mat-tab>
-        <mat-tab label="Order Book">
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <span class="tab-label">Order Book</span>
+          </ng-template>
           <app-order-book [symbol]="symbol()"></app-order-book>
         </mat-tab>
-        <mat-tab label="Recent Trades">
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <span class="tab-label">Recent Trades</span>
+          </ng-template>
           <app-recent-trades [symbol]="symbol()"></app-recent-trades>
         </mat-tab>
       </mat-tab-group>
