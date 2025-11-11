@@ -11,6 +11,7 @@ import { BinanceWs } from '../../shared/services/binance-ws';
 import { finalize } from 'rxjs/operators';
 import { OrderBookComponent } from '../order-book/order-book';
 import { RecentTrades } from '../recent-trades/recent-trades';
+import { SymbolChart } from '../symbol-chart/symbol-chart';
 
 @Component({
   selector: 'app-symbol-details',
@@ -21,6 +22,7 @@ import { RecentTrades } from '../recent-trades/recent-trades';
     MatTabsModule,
     OrderBookComponent,
     RecentTrades,
+    SymbolChart,
   ],
   templateUrl: './symbol-details.html',
   styleUrl: './symbol-details.scss',

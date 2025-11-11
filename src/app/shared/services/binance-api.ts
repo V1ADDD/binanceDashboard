@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { ExchangeInfo, Kline, OrderBook, Ticker24hr } from '../models/binance-types';
+import { ExchangeInfo, OrderBook, Ticker24hr } from '../models/binance-types';
 
 @Injectable({
   providedIn: 'root',
@@ -21,13 +21,17 @@ export class BinanceApi {
     return this.http.get<Ticker24hr | Ticker24hr[]>(url);
   }
 
-  public getKlines(symbol: string, interval: string, limit: number = 500): Observable<Kline[]> {
-    return this.http.get<Kline[]>(
+  public getKlines(
+    symbol: string,
+    interval: string,
+    limit = 500,
+  ): Observable<(string | number)[][]> {
+    return this.http.get<(string | number)[][]>(
       `${this.BASE_URL}/fapi/v1/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`,
     );
   }
 
-  public getOrderBook(symbol: string, limit: number = 20): Observable<OrderBook> {
+  public getOrderBook(symbol: string, limit = 20): Observable<OrderBook> {
     return this.http.get<OrderBook>(
       `${this.BASE_URL}/fapi/v1/depth?symbol=${symbol}&limit=${limit}`,
     );

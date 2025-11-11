@@ -51,6 +51,9 @@
   @if (!isLoading() && !error()) {
     <div class="content">
       <mat-tab-group (selectedIndexChange)="onTabChange($event)" [selectedIndex]="activeTab()">
+        <mat-tab label="Symbol Chart">
+          <app-symbol-chart [symbol]="symbol()"></app-symbol-chart>
+        </mat-tab>
         <mat-tab label="Order Book">
           <app-order-book [symbol]="symbol()"></app-order-book>
         </mat-tab>
