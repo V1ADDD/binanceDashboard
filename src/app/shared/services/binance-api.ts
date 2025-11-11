@@ -24,7 +24,7 @@ export class BinanceApi {
   public getKlines(
     symbol: string,
     interval: string,
-    limit = 500,
+    limit = 150,
   ): Observable<(string | number)[][]> {
     return this.http.get<(string | number)[][]>(
       `${this.BASE_URL}/fapi/v1/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`,

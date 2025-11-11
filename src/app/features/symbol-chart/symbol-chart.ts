@@ -33,6 +33,9 @@ import {
   unitType,
 } from '../../shared/models/chart-types';
 import { indicators, timeIntervals } from '../../shared/models/mock-data';
+import { Subscription } from 'rxjs';
+import { BinanceWs } from '../../shared/services/binance-ws';
+import { KlineEvent } from '../../shared/models/binance-types';
 
 // Регистрируем компоненты Chart.js
 Chart.register(
@@ -61,6 +64,9 @@ export class SymbolChart implements OnInit, OnDestroy {
   public symbol = input.required<string>();
   public recentCandles = signal<CandlestickData[]>([]);
 
+  private klineSubscription?: Subscription;
+  private isChartInitialized = false;
+
   // Интервалы
   public intervals = timeIntervals;
   public selectedInterval = signal<string>('1h');
@@ -71,19 +77,95 @@ export class SymbolChart implements OnInit, OnDestroy {
   private canvasRef = viewChild.required<ElementRef<HTMLCanvasElement>>('canvas');
 
   private binanceApi = inject(BinanceApi);
+  private binanceWs = inject(BinanceWs);
   private destroyRef = inject(DestroyRef);
 
   public ngOnInit(): void {
     this.fetchCandles();
+    this.subscribeToKlineStream();
   }
 
   public ngOnDestroy(): void {
+    this.unsubscribeFromKlineStream();
     this.destroyChart();
   }
 
   public onIntervalChange(interval: string): void {
     this.selectedInterval.set(interval);
+    this.unsubscribeFromKlineStream();
     this.fetchCandles();
+    this.subscribeToKlineStream();
+  }
+
+  private subscribeToKlineStream(): void {
+    this.klineSubscription = this.binanceWs
+      .createKlineStream(this.symbol(), this.selectedInterval())
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (event) => this.handleKlineEvent(event),
+        error: (error) => console.error('WebSocket error:', error),
+      });
+  }
+
+  private unsubscribeFromKlineStream(): void {
+    if (this.klineSubscription) {
+      this.klineSubscription.unsubscribe();
+      this.klineSubscription = undefined;
+    }
+  }
+
+  private handleKlineEvent(event: KlineEvent): void {
+    const kline = event.k;
+
+    if (!kline) return;
+
+    const updatedCandle: CandlestickData = {
+      x: kline.t,
+      o: parseFloat(kline.o),
+      h: parseFloat(kline.h),
+      l: parseFloat(kline.l),
+      c: parseFloat(kline.c),
+    };
+
+    this.updateCandles(updatedCandle, kline.x);
+  }
+
+  private updateCandles(updatedCandle: CandlestickData, isClosed: boolean): void {
+    const currentCandles = this.recentCandles();
+
+    if (currentCandles.length === 0) return;
+
+    if (isClosed) {
+      const newCandles = [...currentCandles, updatedCandle];
+
+      if (newCandles.length > 100) {
+        newCandles.shift();
+      }
+
+      this.recentCandles.set(newCandles);
+    } else {
+      const updatedCandles = [...currentCandles];
+      updatedCandles[updatedCandles.length - 1] = updatedCandle;
+      this.recentCandles.set(updatedCandles);
+    }
+
+    if (this.chartFinancial && this.isChartInitialized) {
+      this.updateChartData();
+    }
+  }
+
+  private updateChartData(): void {
+    this.chartFinancial.data.datasets[0].data = this.recentCandles();
+
+    const indicatorDatasets = this.calculateIndicators();
+    for (let i = 1; i < this.chartFinancial.data.datasets.length; i++) {
+      const indicatorIndex = i - 1;
+      if (indicatorIndex < indicatorDatasets.length) {
+        this.chartFinancial.data.datasets[i] = indicatorDatasets[indicatorIndex];
+      }
+    }
+
+    this.chartFinancial.update('none');
   }
 
   public toggleIndicator(index: number): void {
@@ -154,6 +236,7 @@ export class SymbolChart implements OnInit, OnDestroy {
 
     const chartConfig = this.getChartConfig();
     this.chartFinancial = new Chart(canvas, chartConfig);
+    this.isChartInitialized = true;
   }
 
   private updateChart(): void {
