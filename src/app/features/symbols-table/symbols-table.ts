@@ -98,6 +98,7 @@ export class SymbolsTable {
       const aIsFavorite = this.isFavorite(a.symbol);
       const bIsFavorite = this.isFavorite(b.symbol);
 
+      // избранных выше
       if (aIsFavorite && !bIsFavorite) return -1;
       if (!aIsFavorite && bIsFavorite) return 1;
 

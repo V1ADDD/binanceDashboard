@@ -1,4 +1,12 @@
-import { Component, DestroyRef, inject, input, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  inject,
+  input,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { DepthEvent, OrderBook } from '../../shared/models/binance-types';
 import { catchError, of } from 'rxjs';
 import { BinanceApi } from '../../shared/services/binance-api';
@@ -10,6 +18,7 @@ import { BinanceWs } from '../../shared/services/binance-ws';
   imports: [],
   templateUrl: './order-book.html',
   styleUrl: './order-book.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OrderBookComponent implements OnInit {
   public symbol = input('');
@@ -20,6 +29,7 @@ export class OrderBookComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
 
   public ngOnInit(): void {
+    // получаем стаканы
     this.binanceApi
       .getOrderBook(this.symbol(), 20)
       .pipe(
@@ -30,6 +40,8 @@ export class OrderBookComponent implements OnInit {
         }),
       )
       .subscribe((value) => this.orderBook.set(value));
+
+    // подписываемся на сокет для обновления стаканов
     this.binanceWebSocket
       .createDepthStream(this.symbol())
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -39,6 +51,7 @@ export class OrderBookComponent implements OnInit {
       });
   }
 
+  // обновление информации для отображения
   private updateOrderBook(orderBook: DepthEvent): void {
     const currentOrders = this.orderBook();
     if (currentOrders) {
@@ -50,6 +63,7 @@ export class OrderBookComponent implements OnInit {
     }
   }
 
+  // считаем спред
   public calculateSpread(orderBook: OrderBook): string {
     if (!orderBook.asks.length || !orderBook.bids.length) return 'N/A';
     const bestAsk = parseFloat(orderBook.asks[0][0]);

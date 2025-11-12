@@ -8,6 +8,7 @@ import {
   viewChild,
   ElementRef,
   OnDestroy,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
@@ -58,6 +59,7 @@ Chart.register(
   imports: [FormsModule],
   templateUrl: './symbol-chart.html',
   styleUrl: './symbol-chart.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SymbolChart implements OnInit, OnDestroy {
   public chartFinancial!: Chart;
@@ -67,11 +69,9 @@ export class SymbolChart implements OnInit, OnDestroy {
   private klineSubscription?: Subscription;
   private isChartInitialized = false;
 
-  // Интервалы
   public intervals = timeIntervals;
   public selectedInterval = signal<string>('1h');
 
-  // Индикаторы
   public indicators = signal<IndicatorConfig[]>(indicators);
 
   private canvasRef = viewChild.required<ElementRef<HTMLCanvasElement>>('canvas');
@@ -97,6 +97,7 @@ export class SymbolChart implements OnInit, OnDestroy {
     this.subscribeToKlineStream();
   }
 
+  // подписка на сокет со свечами
   private subscribeToKlineStream(): void {
     this.klineSubscription = this.binanceWs
       .createKlineStream(this.symbol(), this.selectedInterval())
@@ -114,6 +115,7 @@ export class SymbolChart implements OnInit, OnDestroy {
     }
   }
 
+  // переводим данные из типа klineevent -> candlestickdata
   private handleKlineEvent(event: KlineEvent): void {
     const kline = event.k;
 
@@ -130,6 +132,7 @@ export class SymbolChart implements OnInit, OnDestroy {
     this.updateCandles(updatedCandle, kline.x);
   }
 
+  // обновление последней свечи, или если она закрылась, добавление новой
   private updateCandles(updatedCandle: CandlestickData, isClosed: boolean): void {
     const currentCandles = this.recentCandles();
 
@@ -154,6 +157,7 @@ export class SymbolChart implements OnInit, OnDestroy {
     }
   }
 
+  // обновление графика
   private updateChartData(): void {
     this.chartFinancial.data.datasets[0].data = this.recentCandles();
 
@@ -181,6 +185,7 @@ export class SymbolChart implements OnInit, OnDestroy {
     }
   }
 
+  // получение начальных свечей
   private fetchCandles(): void {
     this.binanceApi
       .getKlines(this.symbol(), this.selectedInterval())
@@ -202,6 +207,7 @@ export class SymbolChart implements OnInit, OnDestroy {
     }));
   }
 
+  // расчет сма, среднее арифмитическое предыдущих значений
   private calculateSMA(period: number): number[] {
     const prices = this.recentCandles().map((candle) => candle.c);
     const sma: number[] = [];
@@ -214,6 +220,7 @@ export class SymbolChart implements OnInit, OnDestroy {
     return [...Array(period - 1).fill(null), ...sma];
   }
 
+  // расчет ема, первое - как сма, затем см. по коду
   private calculateEMA(period: number): number[] {
     const prices = this.recentCandles().map((candle) => candle.c);
     const ema: number[] = [];
@@ -223,6 +230,7 @@ export class SymbolChart implements OnInit, OnDestroy {
     ema.push(emaValue);
 
     for (let i = period; i < prices.length; i++) {
+      // расчет 2 и последующего значений ема
       emaValue = (prices[i] - emaValue) * multiplier + emaValue;
       ema.push(emaValue);
     }

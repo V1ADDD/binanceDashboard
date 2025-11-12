@@ -1,4 +1,12 @@
-import { Component, DestroyRef, inject, input, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  inject,
+  input,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { AggTradeEvent } from '../../shared/models/binance-types';
 import { DatePipe } from '@angular/common';
 import { BinanceWs } from '../../shared/services/binance-ws';
@@ -9,6 +17,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   imports: [DatePipe],
   templateUrl: './recent-trades.html',
   styleUrl: './recent-trades.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RecentTrades implements OnInit {
   public symbol = input('');
@@ -18,6 +27,7 @@ export class RecentTrades implements OnInit {
   private destroyRef = inject(DestroyRef);
 
   public ngOnInit(): void {
+    // подключаемся к последним трейдам
     this.binanceWebSocket
       .createAggTradeStream(this.symbol())
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -27,6 +37,7 @@ export class RecentTrades implements OnInit {
       });
   }
 
+  // обновление информации для отображения
   private updateRecentTrades(tradeEvent: AggTradeEvent): void {
     const currentTrades = this.recentTrades();
     const newTrade: AggTradeEvent = {

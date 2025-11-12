@@ -1,4 +1,11 @@
-import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -8,11 +15,12 @@ import { BinanceApi } from '../../shared/services/binance-api';
 import { MatCardModule } from '@angular/material/card';
 import { MatTabsModule } from '@angular/material/tabs';
 import { BinanceWs } from '../../shared/services/binance-ws';
-import { finalize } from 'rxjs/operators';
+import { finalize, switchMap, tap } from 'rxjs/operators';
 import { OrderBookComponent } from '../order-book/order-book';
 import { RecentTrades } from '../recent-trades/recent-trades';
 import { SymbolChart } from '../symbol-chart/symbol-chart';
 import { MatIconButton } from '@angular/material/button';
+import { of } from 'rxjs';
 
 @Component({
   selector: 'app-symbol-details',
@@ -28,6 +36,7 @@ import { MatIconButton } from '@angular/material/button';
   ],
   templateUrl: './symbol-details.html',
   styleUrl: './symbol-details.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SymbolDetails implements OnInit {
   private route = inject(ActivatedRoute);
@@ -46,31 +55,42 @@ export class SymbolDetails implements OnInit {
   public activeTab = signal<number>(0);
 
   public ngOnInit(): void {
-    this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
-      const symbol = params.get('symbol');
-      if (symbol) {
-        this.symbol.set(symbol);
+    this.route.paramMap
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        switchMap((params) => {
+          const symbol = params.get('symbol');
 
-        this.isLoading.set(true);
-        this.binanceApi
-          .get24hrTicker(symbol)
-          .pipe(
-            takeUntilDestroyed(this.destroyRef),
+          if (!symbol) {
+            return of(null);
+          }
+
+          this.symbol.set(symbol);
+          this.error.set(null);
+          this.isLoading.set(true);
+
+          const apiCall$ = this.binanceApi.get24hrTicker(symbol).pipe(
+            tap({
+              next: (data) => this.ticker24hr.set(data as Ticker24hr),
+              error: () => this.router.navigate(['/dashboard']),
+            }),
+          );
+
+          const wsCall$ = this.binanceWebSocket.createPriceStream(symbol).pipe(
+            tap({
+              next: (data) => this.updatePrice(data),
+              error: (error) => console.error('WebSocket error:', error),
+            }),
+          );
+
+          // Запускаем оба потока
+          return apiCall$.pipe(
             finalize(() => this.isLoading.set(false)),
-          )
-          .subscribe((value) => this.ticker24hr.set(value as Ticker24hr));
-
-        this.binanceWebSocket
-          .createPriceStream(symbol)
-          .pipe(takeUntilDestroyed(this.destroyRef))
-          .subscribe({
-            next: (data) => this.updatePrice(data),
-            error: (error) => console.error('WebSocket error (price):', error),
-          });
-      } else {
-        this.error.set('Symbol not found');
-      }
-    });
+            switchMap(() => wsCall$),
+          );
+        }),
+      )
+      .subscribe();
   }
 
   private updatePrice(price: PriceEvent): void {
