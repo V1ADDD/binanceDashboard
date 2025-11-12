@@ -1,0 +1,17 @@
+@use '../../shared/styles/variables' as v;
+@use '../../shared/styles/mixins' as m;
+
+.not-found {
+  @include m.flex-center;
+  @include m.flex-column;
+
+  h2 {
+    font-weight: 500;
+  }
+  button {
+    font-weight: 500;
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    padding: v.$spacing-md v.$spacing-lg;
+  }
+}

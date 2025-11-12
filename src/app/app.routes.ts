@@ -11,4 +11,8 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/symbol-details/symbol-details').then((m) => m.SymbolDetails),
   },
+  {
+    path: '**',
+    loadComponent: () => import('./features/not-found/not-found').then((m) => m.NotFound),
+  },
 ];
