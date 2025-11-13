@@ -14,10 +14,13 @@ export class BinanceApi {
     return this.http.get<ExchangeInfo>(`${this.BASE_URL}/fapi/v1/exchangeInfo`);
   }
 
+  public get24hrTicker(symbol: string): Observable<Ticker24hr>;
+  public get24hrTicker(): Observable<Ticker24hr[]>;
   public get24hrTicker(symbol?: string): Observable<Ticker24hr | Ticker24hr[]> {
     const url = symbol
       ? `${this.BASE_URL}/fapi/v1/ticker/24hr?symbol=${symbol}`
       : `${this.BASE_URL}/fapi/v1/ticker/24hr`;
+
     return this.http.get<Ticker24hr | Ticker24hr[]>(url);
   }
 

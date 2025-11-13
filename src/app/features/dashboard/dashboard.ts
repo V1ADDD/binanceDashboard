@@ -60,18 +60,18 @@ export class Dashboard implements OnInit {
         takeUntilDestroyed(this.destroyRef),
         tap(() => this.setLoadingState()),
         switchMap(() => this.fetchSymbols()),
+        catchError((error) => {
+          this.handleError('Polling error:', error);
+          return of([]);
+        }),
       )
-      .subscribe({
-        next: (data) => this.handleSymbolsData(data as Ticker24hr[]),
-        error: (error) => this.handleError('Polling error:', error),
-      });
+      .subscribe((data) => this.handleSymbolsData(data as Ticker24hr[]));
   }
 
   // мануальное обновление данных
   public refreshData(): void {
     this.error.set(null);
     this.isLoading.set(true);
-    this.error.set(null);
     this.fetchSymbols()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
@@ -88,7 +88,7 @@ export class Dashboard implements OnInit {
     this.favoritesService.toggleFavorite(symbol);
   }
 
-  private fetchSymbols(): Observable<Ticker24hr[] | Ticker24hr> {
+  private fetchSymbols(): Observable<Ticker24hr[]> {
     return this.binanceApi.get24hrTicker().pipe(
       catchError((error) => {
         console.error('API Error:', error);
@@ -100,8 +100,12 @@ export class Dashboard implements OnInit {
   }
 
   private handleSymbolsData(data: Ticker24hr[]): void {
-    const symbolsArray = data;
-    this.symbols.set(symbolsArray);
+    if (!data || data.length === 0) {
+      this.error.set('No data available');
+      this.isLoading.set(false);
+      return;
+    }
+    this.symbols.set(data);
     this.lastUpdate.set(new Date());
     this.isLoading.set(false);
     this.error.set(null);
@@ -115,7 +119,7 @@ export class Dashboard implements OnInit {
 
   private setLoadingState(): void {
     // Устанавливаем loading только если данных еще нет
-    if (!this.hasSymbols()) {
+    if (!this.hasSymbols() && !this.error()) {
       this.isLoading.set(true);
     }
   }
