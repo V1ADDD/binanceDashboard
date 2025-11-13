@@ -1,0 +1,84 @@
+@use '../../shared/styles/variables' as v;
+@use '../../shared/styles/mixins' as m;
+
+.symbol-details {
+  height: 100%;
+  @include m.flex-column;
+}
+
+.header {
+  @include m.flex-center;
+  gap: v.$spacing-md;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  padding: v.$spacing-md;
+
+  h2 {
+    margin: 0;
+    font-size: v.$font-size-xxl;
+    font-weight: 500;
+    min-width: 120px;
+    color: var(--text-primary);
+  }
+}
+
+.price-stats-container {
+  @include m.flex-center;
+  gap: v.$spacing-xl;
+  margin-left: auto;
+}
+
+.price-info {
+  @include m.flex-column;
+  align-items: flex-end;
+  min-width: 140px;
+
+  .price {
+    font-size: v.$font-size-xl;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .change {
+    font-size: v.$font-size-md;
+  }
+}
+
+.stats-header {
+  display: flex;
+  gap: v.$spacing-lg;
+  align-items: center;
+
+  .stat-item {
+    @include m.flex-column;
+    align-items: center;
+    text-align: center;
+    min-width: 80px;
+
+    .label {
+      font-size: v.$font-size-sm;
+      color: var(--text-secondary);
+      margin-bottom: 2px;
+    }
+
+    .value {
+      font-size: v.$font-size-md;
+      font-weight: 500;
+    }
+  }
+}
+
+.back-button {
+  margin-right: v.$spacing-sm;
+  cursor: pointer;
+}
+
+.content {
+  flex: 1;
+  padding: v.$spacing-md;
+  overflow: auto;
+  background: var(--background);
+  .tab-label {
+    color: var(--text-primary);
+  }
+}

@@ -1,0 +1,14 @@
+@use './shared/styles/variables' as v;
+@use './shared/styles/mixins' as m;
+
+.main-content {
+  padding: v.$spacing-md;
+  height: calc(100vh - 64px);
+  box-sizing: border-box;
+}
+
+mat-toolbar {
+  @include m.flex-between;
+  background: var(--surface);
+  color: var(--text-primary);
+}

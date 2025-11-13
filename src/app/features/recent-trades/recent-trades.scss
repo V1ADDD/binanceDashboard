@@ -1,0 +1,30 @@
+@use '../../shared/styles/variables' as v;
+@use '../../shared/styles/mixins' as m;
+
+.recent-trades {
+  .trade-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: v.$spacing-md;
+    padding: v.$spacing-sm v.$spacing-md;
+    border-bottom: 1px solid var(--border);
+
+    &:first-child {
+      font-weight: 500;
+      border-bottom: 3px solid var(--border);
+    }
+
+    .time,
+    .price,
+    .quantity,
+    .total {
+      text-align: center;
+    }
+  }
+
+  .no-trades {
+    text-align: center;
+    padding: v.$spacing-xxl;
+    color: var(--text-secondary);
+  }
+}

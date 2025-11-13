@@ -1,0 +1,60 @@
+@use '../../shared/styles/variables' as v;
+@use '../../shared/styles/mixins' as m;
+
+.dashboard {
+  height: 100%;
+  @include m.flex-column;
+  gap: v.$spacing-md;
+}
+
+.dashboard-header {
+  @include m.flex-between;
+  align-items: flex-start;
+  padding: 0 v.$spacing-sm;
+  gap: v.$spacing-md;
+}
+
+.header-left {
+  @include m.flex-column;
+  gap: v.$spacing-xs;
+}
+
+.header-right {
+  @include m.flex-center;
+  gap: v.$spacing-md;
+}
+
+h1 {
+  margin: 0;
+  font-size: v.$font-size-xxl;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.last-update {
+  font-size: v.$font-size-sm;
+  color: var(--text-secondary);
+}
+
+.content {
+  flex: 1;
+  position: relative;
+  min-height: 400px;
+}
+
+.loading-overlay {
+  @include m.overlay;
+  @include m.flex-column;
+  @include m.flex-center;
+  background: var(--background);
+  z-index: v.$z-index-overlay;
+
+  .dark-theme & {
+    background: rgba(0, 0, 0, 0.9);
+  }
+
+  p {
+    margin-top: v.$spacing-md;
+    color: var(--text-secondary);
+  }
+}

@@ -1,0 +1,165 @@
+@use '../../shared/styles/variables' as v;
+@use '../../shared/styles/mixins' as m;
+
+.table-container {
+  height: 100%;
+  @include m.flex-column;
+}
+
+.table-header {
+  padding: v.$spacing-md;
+  border-bottom: 1px solid var(--border);
+  @include m.flex-between;
+  background: var(--surface);
+  border-radius: 4px 4px 0 0;
+}
+
+.search-field {
+  width: 300px;
+  input {
+    color: var(--text-secondary);
+  }
+}
+
+.table-info {
+  color: var(--text-secondary);
+  font-size: v.$font-size-md;
+}
+
+.table-wrapper {
+  flex: 1;
+  background: var(--surface);
+  border-radius: 0 0 4px 4px;
+  overflow: hidden;
+  height: 60vh;
+}
+
+.viewport {
+  height: 100%;
+  width: 100%;
+}
+
+.cdk-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.header-cell {
+  padding: 0 v.$spacing-md;
+  height: 48px;
+  font-weight: 600;
+  color: var(--text-primary);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  cursor: default;
+
+  &.sortable {
+    cursor: pointer;
+
+    &:hover {
+      background: var(--hover);
+    }
+  }
+}
+
+.header-content {
+  @include m.flex-between;
+  gap: v.$spacing-sm;
+}
+
+.sort-icon {
+  font-size: v.$font-size-lg;
+  width: v.$font-size-lg;
+  height: v.$font-size-lg;
+  color: var(--text-secondary);
+}
+
+.cell {
+  padding: 0 v.$spacing-md;
+  height: 48px;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-primary);
+}
+
+.header-row {
+  background: var(--surface);
+}
+
+.row {
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: var(--hover);
+  }
+
+  &.even {
+    background: var(--even-row);
+
+    &:hover {
+      background: var(--hover);
+    }
+  }
+
+  &.odd {
+    background: var(--surface);
+
+    &:hover {
+      background: var(--hover);
+    }
+  }
+}
+
+.symbol-cell {
+  font-weight: 500;
+}
+
+.symbol-link {
+  color: inherit;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.favorite-cell {
+  width: 60px;
+}
+
+.empty-state {
+  @include m.flex-column;
+  @include m.flex-center;
+  height: 200px;
+  color: var(--text-secondary);
+  background: var(--surface);
+  border-radius: 0 0 4px 4px;
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    margin-bottom: v.$spacing-md;
+    opacity: 0.5;
+  }
+
+  p {
+    margin: v.$spacing-xs 0;
+  }
+}
+
+.search-hint {
+  font-size: v.$font-size-md;
+  opacity: 0.7;
+}
+
+.positive {
+  color: v.$primary-color;
+  font-weight: 500;
+}
+
+.negative {
+  color: v.$negative-color;
+  font-weight: 500;
+}

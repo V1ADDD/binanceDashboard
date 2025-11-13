@@ -1,0 +1,41 @@
+<div class="chart-container">
+  <div class="chart-controls">
+    <div class="control-group">
+      <label for="interval-select">Interval:</label>
+      <select
+        [ngModel]="selectedInterval()"
+        (ngModelChange)="onIntervalChange($event)"
+        class="interval-select"
+        id="interval-select"
+      >
+        @for (interval of intervals; track $index) {
+          <option [value]="interval.value">
+            {{ interval.label }}
+          </option>
+        }
+      </select>
+    </div>
+
+    <div class="control-group">
+      <button (click)="resetZoom()" class="btn btn-sm">Reset Zoom</button>
+    </div>
+  </div>
+
+  <div class="indicators-list">
+    @for (indicator of indicators(); track $index) {
+      <button
+        class="indicator-item"
+        [class.active]="indicator.visible"
+        (click)="toggleIndicator($index)"
+        (keydown)="toggleIndicator($index)"
+      >
+        <span class="indicator-color" [style.background]="indicator.color"></span>
+        {{ indicator.type.toUpperCase() }}({{ indicator.period }})
+      </button>
+    }
+  </div>
+
+  <div class="chart-wrapper">
+    <canvas #canvas></canvas>
+  </div>
+</div>

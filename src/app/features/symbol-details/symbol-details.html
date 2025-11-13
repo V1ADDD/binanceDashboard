@@ -1,0 +1,75 @@
+<div class="symbol-details">
+  <div class="header">
+    <button mat-icon-button (click)="goBack()" class="back-button">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+
+    <h2>{{ symbol() }}</h2>
+    @if (ticker24hr()) {
+      <div class="price-stats-container">
+        <div class="stats-header">
+          <div class="stat-item">
+            <span class="label">24hr High</span>
+            <span class="value positive">{{ formatNumber(ticker24hr()!.highPrice) }}</span>
+          </div>
+          <div class="stat-item">
+            <span class="label">24hr Low</span>
+            <span class="value negative">{{ formatNumber(ticker24hr()!.lowPrice) }}</span>
+          </div>
+          <div class="stat-item">
+            <span class="label">24hr Volume</span>
+            <span class="value">{{ formatNumber(ticker24hr()!.volume) }}</span>
+          </div>
+        </div>
+        <div class="price-info">
+          <span class="price">
+            {{ price() ? formatNumber(price()!) : formatNumber(ticker24hr()!.lastPrice) }}
+          </span>
+          <span class="change" [class]="getPriceChangeClass(ticker24hr()!.priceChange)">
+            {{ ticker24hr()!.priceChange }} ({{ ticker24hr()!.priceChangePercent }}%)
+          </span>
+        </div>
+      </div>
+    }
+  </div>
+
+  @if (isLoading()) {
+    <div class="loading-state">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>Loading {{ symbol() }} data...</p>
+    </div>
+  }
+
+  @if (error() && !isLoading()) {
+    <div class="error-state">
+      <mat-icon>error_outline</mat-icon>
+      <p>{{ error() }}</p>
+      <button mat-button (click)="goBack()">Back to Dashboard</button>
+    </div>
+  }
+
+  @if (!isLoading() && !error()) {
+    <div class="content">
+      <mat-tab-group (selectedIndexChange)="onTabChange($event)" [selectedIndex]="activeTab()">
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <span class="tab-label">Symbol Chart</span>
+          </ng-template>
+          <app-symbol-chart [symbol]="symbol()"></app-symbol-chart>
+        </mat-tab>
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <span class="tab-label">Order Book</span>
+          </ng-template>
+          <app-order-book [symbol]="symbol()"></app-order-book>
+        </mat-tab>
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <span class="tab-label">Recent Trades</span>
+          </ng-template>
+          <app-recent-trades [symbol]="symbol()"></app-recent-trades>
+        </mat-tab>
+      </mat-tab-group>
+    </div>
+  }
+</div>

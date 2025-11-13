@@ -1,0 +1,60 @@
+@use 'variables' as v;
+
+@mixin light-theme {
+  color-scheme: light;
+
+  --surface: #{v.$light-surface};
+  --on-surface: #{v.$light-on-surface};
+  --background: #{v.$light-background};
+  --border: #{v.$light-border};
+  --hover: #{v.$light-hover};
+  --even-row: #{v.$light-even-row};
+  --text-primary: #{v.$light-text-primary};
+  --text-secondary: #{v.$light-text-secondary};
+  --text-disabled: #{v.$light-text-disabled};
+}
+
+@mixin dark-theme {
+  color-scheme: dark;
+
+  --surface: #{v.$dark-surface};
+  --on-surface: #{v.$dark-on-surface};
+  --background: #{v.$dark-background};
+  --border: #{v.$dark-border};
+  --hover: #{v.$dark-hover};
+  --even-row: #{v.$dark-even-row};
+  --text-primary: #{v.$dark-text-primary};
+  --text-secondary: #{v.$dark-text-secondary};
+  --text-disabled: #{v.$dark-text-disabled};
+}
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+@mixin overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+@mixin card {
+  background: var(--surface);
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
